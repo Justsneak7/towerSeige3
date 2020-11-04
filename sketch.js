@@ -4,14 +4,14 @@ const Bodies = Matter.Bodies;
 const Constraint = Matter.Constraint;
 
 var engine, world;
-var holder,polygon,ground;
+var holder,hexagon,ground;
 var stand1,stand2;
 var polygon;
 var slingShot;
-var polygon_img;
+var hexagon_img;
 var score = 0;
 function preload(){
-  //polygon_img=loadImage("polygon.png");
+  hexagon_png=loadImage("hexa.png");
   
 }
 function setup() {
@@ -59,10 +59,10 @@ function setup() {
   blocks9 = new Block(700,95,30,40);
 
   
-  polygon = Bodies.circle(50,200,20);
-  World.add(world,polygon);
+  hexagon = Bodies.circle(50,200,20);
+  World.add(world,hexagon);
   
-  slingShot = new Slingshot(this.polygon,{x:100,y:200});
+  slingShot = new Slingshot(this.hexagon,{x:100,y:200});
 
 }
 function draw() {
@@ -118,20 +118,39 @@ function draw() {
   blocks9.display();
   fill("gold");
   imageMode(CENTER)
-  image(polygon_img ,polygon.position.x,polygon.position.y,40,40);
+  image(hexagon_img ,hexagon.position.x,hexagon.position.y,40,40);
 
   slingShot.display();
    
 }
 function mouseDragged(){
-  Matter.Body.setPosition(this.polygon,{x:mouseX,y:mouseY});
+  Matter.Body.setPosition(this.hexagon,{x:mouseX,y:mouseY});
 }
 function mouseReleased(){
   slingShot.fly();
 }
 function keyPressed(){
   if(keyCode === 32){
-      slingShot.attach(this.polygon);
+      slingShot.attach(this.hexagon);
   }
 }
+async function getTime(){
+  var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Kolkata");
+  var responsejson = await response.json();
+  var dt = responsejson.datetime
+  var hour = await dt.slice(11,13)
+  console.log(hour);
+
+  if(hour>= 06 && hour<= 12 ){
+      background(255,255,255);
+  }
+  else{
+      background(0,0,0);
+  }
+}
+
+function score(){
+  if(this.Visiblity<0 && this.Visiblity > -1005){
+    score++;
+}}
 
