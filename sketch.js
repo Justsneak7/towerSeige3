@@ -1,156 +1,197 @@
 const Engine = Matter.Engine;
 const World = Matter.World;
 const Bodies = Matter.Bodies;
+const Body = Matter.Body;
+const Render = Matter.Render;
 const Constraint = Matter.Constraint;
+var world, engine;
 
-var engine, world;
-var holder,hexagon,ground;
-var stand1,stand2;
-var polygon;
-var slingShot;
-var hexagon_img;
-var score = 0;
-function preload(){
-  hexagon_png=loadImage("hexa.png");
-  
-}
+var stone, sling, gameState, score;
+var platform1, platform2, ground;
+var blu1, blu2, blu3, blu4, blu5, blu6, blu7, blu8, blu9, blu10, blu11, blu12;
+var red1, red2, red3, red4, red5, red6;
+var gre1, gre2, gre3, gre4, rge5, gre6;
+var grey;
+var sBlu, sRed, sGre, whi;
+
 function setup() {
-  createCanvas(900,400);
+  createCanvas(1200,500);
   engine = Engine.create();
   world = engine.world;
+  score = 0;
+  textSize(14);
+
+  gameState = "onSling";
+
+  //preset colours
+  sBlu = [50, 50, 250];
+  sGre = [50, 250, 50];
+  sRed = [250, 50, 50];
+
+  //make the platforms and a ground
+  platform1 = new Box(530, 440, 320, 30, 255, true);
+  platform2 = new Box(960, 200, 260, 30, 255, true);
+  ground = new Base(width/2, height + 10, width, 30);
+
+  //make the hurler
+  stone = new Hexa(130, 240, 30);
+
+  //make the sling for the sling shot
+  sling = new String(stone.body, {x: 130, y: 220});
+
+  //the first piramid
+  blu1 = new Box(410, 400, 40, 50, sBlu, false);
+  blu2 = new Box(450, 400, 40, 50, sBlu, false);
+  blu3 = new Box(490, 400, 40, 50, sBlu, false);
+  blu4 = new Box(530, 400, 40, 50, sBlu, false);
+  blu5 = new Box(570, 400, 40, 50, sBlu, false);
+  blu6 = new Box(610, 400, 40, 50, sBlu, false);
+  blu7 = new Box(650, 400, 40, 50, sBlu, false);
+
+  gre1 = new Box(450, 350, 40, 50, sGre, false);
+  gre2 = new Box(490, 350, 40, 50, sGre, false);
+  gre3 = new Box(530, 350, 40, 50, sGre, false);
+  gre4 = new Box(570, 350, 40, 50, sGre, false);
+  gre5 = new Box(610, 350, 40, 50, sGre, false);
+
+  red1 = new Box(490, 300, 40, 50, sRed, false);
+  red2 = new Box(530, 300, 40, 50, sRed, false);
+  red3 = new Box(570, 300, 40, 50, sRed, false);
+
+  grey = new Box(530, 250 ,40, 50, 155, false);
+
+  //the second piramid
+  blu8 = new Box(870, 150, 40, 50, sBlu, false);
+  blu9 = new Box(910, 150, 40, 50, sBlu, false);
+  blu10 = new Box(950, 150, 40, 50, sBlu, false);
+  blu11 = new Box(990, 150, 40, 50, sBlu, false);
+  blu12 = new Box(1030, 150, 40, 50, sBlu, false);
+
+  red4 = new Box(910, 100, 40, 50 ,sRed, false);
+  red5 = new Box(950, 100, 40, 50 ,sRed, false);
+  red6 = new Box(990, 100, 40, 50 ,sRed, false);
+
+  gre6 = new Box(950, 50, 40, 50, sGre, false);
+
   Engine.run(engine);
-  
-  ground = new Ground();
-  stand1 = new Stand(390,300,250,10);
-  stand2 = new Stand(700,200,200,10);
- 
-  
-  block1 = new Block(300,275,30,40);
-  block2 = new Block(330,275,30,40);
-  block3 = new Block(360,275,30,40);
-  block4 = new Block(390,275,30,40);
-  block5 = new Block(420,275,30,40);
-  block6 = new Block(450,275,30,40);
-  block7 = new Block(480,275,30,40);
-  
-  block8 = new Block(330,235,30,40);
-  block9 = new Block(360,235,30,40);
-  block10 = new Block(390,235,30,40);
-  block11 = new Block(420,235,30,40);
-  block12 = new Block(450,235,30,40);
-  
-  block13 = new Block(360,195,30,40);
-  block14 = new Block(390,195,30,40);
-  block15 = new Block(420,195,30,40);
-  
-  block16 = new Block(390,155,30,40);
-
- 
-  blocks1 = new Block(640,175,30,40);
-  blocks2 = new Block(670,175,30,40);
-  blocks3 = new Block(700,175,30,40);
-  blocks4 = new Block(730,175,30,40);
-  blocks5 = new Block(760,175,30,40);
- 
-  blocks6 = new Block(670,135,30,40);
-  blocks7 = new Block(700,135,30,40);
-  blocks8 = new Block(730,135,30,40);
-  
-  blocks9 = new Block(700,95,30,40);
-
-  
-  hexagon = Bodies.circle(50,200,20);
-  World.add(world,hexagon);
-  
-  slingShot = new Slingshot(this.hexagon,{x:100,y:200});
-
 }
+
 function draw() {
+  background(100);
+  Engine.update(engine);
   
-  
-  textSize(25);
-  fill("white");
-  text("SCORE :"+ score,700,40);
-  
-  
-  textSize(20);
-  fill("lightyellow");
-  text("Drag the polygon to destroy the blocks",300,30);
-  textSize(10);
-  text("Press Space to get a second Chance to Play!!",650 ,350);
-  
-  ground.display();
-  stand1.display();
-  stand2.display();
-  strokeWeight(2);
-  stroke(15);
-  fill("skyblue");
-  block1.display();
-  block2.display();
-  block3.display();
-  block4.display();
-  block5.display();
-  block6.display();
-  block7.display();
-  fill("pink");
-  block8.display();
-  block9.display();
-  block10.display();
-  block11.display();
-  block12.display();
-  fill("turquoise");
-  block13.display();
-  block14.display();
-  block15.display();
-  fill("grey");
-  block16.display();
-  fill("skyblue");
-  blocks1.display();
-  blocks2.display();
-  blocks3.display();
-  blocks4.display();
-  blocks5.display();
-  fill("turquoise");
-  blocks6.display();
-  blocks7.display();
-  blocks8.display();
-  fill("pink")
-  blocks9.display();
-  fill("gold");
-  imageMode(CENTER)
-  image(hexagon_img ,hexagon.position.x,hexagon.position.y,40,40);
 
-  slingShot.display();
-   
+  //scoring
+  fill(0);
+  textSize(17);
+  text("score: " + score, 100, 50);
+  if(score > 2499){
+    fill(30, 255, 30);
+    textSize(20);
+    gameState = "onSling";
+    sling.attach(stone.body);
+    text("score: " + score, 545, 220);
+    text("YOU WIN!!", 550, 250);
+  }
+
+  //2 platforms and a ground
+  platform1.display();
+  platform2.display();
+  ground.display();
+
+  //stone
+  stone.display();
+
+  //sling line
+  sling.display();
+  strokeWeight(1);
+
+  //piramid 1
+  blu1.destroy();
+  blu2.destroy();
+  blu3.destroy();
+  blu4.destroy();
+  blu5.destroy();
+  blu6.destroy();
+  blu7.destroy();
+  //scoring
+  blu1.score();
+  blu2.score();
+  blu3.score();
+  blu4.score();
+  blu5.score();
+  blu6.score();
+  blu7.score();
+
+  gre1.destroy();
+  gre2.destroy();
+  gre3.destroy();
+  gre4.destroy();
+  gre5.destroy();
+  //scoring
+  gre1.score();
+  gre2.score();
+  gre3.score();
+  gre4.score();
+  gre5.score();
+
+  red1.destroy();
+  red2.destroy();
+  red3.destroy();
+  //scoring
+  red1.score();
+  red2.score();
+  red3.score();
+
+  grey.destroy();
+  grey.score();
+
+  //piramid 2
+  blu8.destroy();
+  blu9.destroy();
+  blu10.destroy();
+  blu11.destroy();
+  blu12.destroy();
+  //scoring
+  blu8.score();
+  blu9.score();
+  blu10.score();
+  blu11.score();
+  blu12.score();
+
+  red4.destroy();
+  red5.destroy();
+  red6.destroy();
+  //scoring
+  red4.score();
+  red5.score();
+  red6.score();
+
+  gre6.destroy();
+  gre6.score();
+
+  drawSprites();
+  fill(230, 200, 40);
+  text("press the space bar to take another shot", 900, 450);
+  text("destroy the boxes!!", 480, 50);
 }
+
+//draggind the box
 function mouseDragged(){
-  Matter.Body.setPosition(this.hexagon,{x:mouseX,y:mouseY});
+  if(gameState === "onSling"){
+    Body.setPosition(stone.body, {x: mouseX, y: mouseY});
+  }
 }
+
+//releasing the box
 function mouseReleased(){
-  slingShot.fly();
+  gameState = "shot";
+  sling.fly();
 }
+
 function keyPressed(){
   if(keyCode === 32){
-      slingShot.attach(this.hexagon);
+    gameState = "onSling";
+    sling.attach(stone.body);
   }
 }
-async function getTime(){
-  var response = await fetch("http://worldtimeapi.org/api/timezone/Asia/Kolkata");
-  var responsejson = await response.json();
-  var dt = responsejson.datetime
-  var hour = await dt.slice(11,13)
-  console.log(hour);
-
-  if(hour>= 06 && hour<= 12 ){
-      background(255,255,255);
-  }
-  else{
-      background(0,0,0);
-  }
-}
-
-function score(){
-  if(this.Visiblity<0 && this.Visiblity > -1005){
-    score++;
-}}
-
